@@ -179,6 +179,7 @@
     <Compile Include="Code\Item\CItemThreeState.cs" />
     <Compile Include="Code\Item\CItemToggle.cs" />
     <Compile Include="Code\Score,Song\CBoxDef.cs" />
+    <Compile Include="Code\Score,Song\CFavoritesManager.cs" />
     <Compile Include="Code\Score,Song\CDTX.cs" />
     <Compile Include="Code\Score,Song\CScoreIni.cs" />
     <Compile Include="Code\Score,Song\CSetDef.cs" />

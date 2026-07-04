@@ -1042,6 +1042,8 @@ namespace DTXMania
 			string[] ba = listStrBoxDefSkinSubfolderFullName.ToArray();
 			Array.Sort( ba );
 			CDTXMania.Skin.strBoxDefSkinSubfolders = ba;
+
+			CFavoritesManager.tRebuildFavoritesBox( this );
 		}
 		private void t曲リストへ後処理を適用する( List<CSongListNode> ノードリスト )
 		{

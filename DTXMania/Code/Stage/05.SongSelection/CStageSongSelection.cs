@@ -471,6 +471,39 @@ namespace DTXMania
                             return 0;
                         }
                         #endregion
+						#region [ F1: Favorite ]
+                        if (CDTXMania.InputManager.Keyboard.bKeyPressed((int)SlimDXKey.F1))
+						{
+							if( this.actSongList.rSelectedSong != null && this.actSongList.rSelectedSong.eNodeType == CSongListNode.ENodeType.SCORE )
+							{
+								bool bSelectedInFavorites = this.actSongList.b現在選択中の曲がFavorites内にある();
+								bool bAdded = CFavoritesManager.bToggleFavorite( this.actSongList.rSelectedSong );
+								if( CDTXMania.SongManager.listSongBeforeSearch != null )
+								{
+									List<CSongListNode> listCurrentSearchRoot = CDTXMania.SongManager.listSongRoot;
+									CDTXMania.SongManager.listSongRoot = CDTXMania.SongManager.listSongBeforeSearch;
+									CFavoritesManager.tRebuildFavoritesBox( CDTXMania.SongManager );
+									CDTXMania.SongManager.listSongBeforeSearch = CDTXMania.SongManager.listSongRoot;
+									CDTXMania.SongManager.listSongRoot = listCurrentSearchRoot;
+								}
+								if( bSelectedInFavorites && !bAdded )
+								{
+									this.actSongList.t現在選択中の曲を現在のリストから削除して近い項目へ移動する();
+								}
+								else
+								{
+									CFavoritesManager.tRebuildFavoritesBox( CDTXMania.SongManager );
+									this.actSongList.t現在選択中の曲を元に曲バーを再構成する();
+									this.actSongList.t選択曲が変更された(true);
+								}
+								this.tSelectedSongChanged();
+								this.tUpdateSearchNotification( bAdded ? "Added to Favorites" : "Removed from Favorites" );
+								this.ctSearchInputDisplayCounter.tStart(0, 1, 5000, CDTXMania.Timer);
+								CDTXMania.Skin.soundDecide.tPlay();
+							}
+                            return 0;
+                        }
+						#endregion
                         #region [ CONFIG画面 ]
                         if (CDTXMania.Pad.bPressed(EInstrumentPart.GUITAR, EPad.Help))
                         {	// [SHIFT] + [F1] CONFIG
@@ -481,21 +514,6 @@ namespace DTXMania
                             CDTXMania.Skin.soundCancel.tPlay();
                             return 0;
                         }
-						#endregion
-						#region [ Shift-F2: 未使用 ]
-						// #24525 2011.3.16 yyagi: [SHIFT]+[F2]は廃止(将来発生するかもしれない別用途のためにキープ)
-						/*
-                        if ((CDTXMania.InputManager.Keyboard.bKeyPressing((int)SlimDXKey.RightShift) || CDTXMania.InputManager.Keyboard.bKeyPressing((int)SlimDXKey.LeftShift)) &&
-                            CDTXMania.InputManager.Keyboard.bKeyPressed((int)SlimDXKey.F2))
-                        {	// [SHIFT] + [F2] CONFIGURATION
-                            this.actPresound.tサウンド停止();
-                            this.eReturnValueAfterFadeOut = EReturnValue.オプション呼び出し;
-                            this.actFIFO.tStartFadeOut();
-                            base.ePhaseID = CStage.EPhase.Common_FadeOut;
-                            CDTXMania.Skin.soundCancel.tPlay();
-                            return 0;
-                        }
-						*/
 						#endregion
 						if (this.actSongList.rSelectedSong != null)
                         {

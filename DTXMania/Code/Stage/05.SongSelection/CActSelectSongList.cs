@@ -259,6 +259,40 @@ namespace DTXMania
 			}
 			return ret;
 		}
+		public bool b現在選択中の曲がFavorites内にある()
+		{
+			return this.rSelectedSong != null &&
+				this.rSelectedSong.r親ノード != null &&
+				this.rSelectedSong.r親ノード.strタイトル == CFavoritesManager.FavoriteBoxTitle;
+		}
+		public bool t現在選択中の曲を現在のリストから削除して近い項目へ移動する()
+		{
+			if( this.rSelectedSong == null || this.rSelectedSong.eNodeType != CSongListNode.ENodeType.SCORE )
+				return false;
+
+			List<CSongListNode> songList = GetSongListWithinMe( this.rSelectedSong );
+			if( songList == null )
+				return false;
+
+			int index = songList.IndexOf( this.rSelectedSong );
+			if( index < 0 )
+				return false;
+
+			songList.RemoveAt( index );
+			if( songList.Count == 0 )
+			{
+				this.rSelectedSong = null;
+				return true;
+			}
+
+			if( index >= songList.Count )
+				index = songList.Count - 1;
+
+			this.rSelectedSong = songList[ index ];
+			this.t現在選択中の曲を元に曲バーを再構成する();
+			this.t選択曲が変更された(true);
+			return true;
+		}
 		public void t現在選択中の曲を元に曲バーを再構成する()
 		{
 			this.tInitializeBar();
