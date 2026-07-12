@@ -594,6 +594,9 @@ namespace DTXMania
 			this.txSongSelectionBar.Score = CDTXMania.tGenerateTexture( CSkin.Path( @"Graphics\5_bar score selected.png" ), false );
 			this.txSongSelectionBar.Box = CDTXMania.tGenerateTexture( CSkin.Path( @"Graphics\5_bar box selected.png" ), false );
 			this.txSongSelectionBar.Other = CDTXMania.tGenerateTexture( CSkin.Path( @"Graphics\5_bar other selected.png" ), false );
+			this.txFavoriteIcon = CDTXMania.tGenerateTexture( CSkin.Path( @"Graphics\icon_favorite.png" ), false );
+			if( this.txFavoriteIcon != null )
+				this.txFavoriteIcon.vcScaleRatio = new Vector3( 0.28f, 0.28f, 1f );
             this.txSkillNumbers = CDTXMania.tGenerateTexture(CSkin.Path(@"Graphics\ScreenSelect skill number on list.png"), false);
             this.txTopPanel = CDTXMania.tGenerateTexture(CSkin.Path(@"Graphics\5_header song list.png"), false);
             this.txBottomPanel = CDTXMania.tGenerateTexture(CSkin.Path(@"Graphics\5_footer song list.png"), false);
@@ -691,6 +694,7 @@ namespace DTXMania
 			CDTXMania.t安全にDisposeする( ref this.txSongSelectionBar.Score );
 			CDTXMania.t安全にDisposeする( ref this.txSongSelectionBar.Box );
 			CDTXMania.t安全にDisposeする( ref this.txSongSelectionBar.Other );
+			CDTXMania.t安全にDisposeする( ref this.txFavoriteIcon );
             CDTXMania.t安全にDisposeする( ref this.txTopPanel );
             CDTXMania.t安全にDisposeする( ref this.txBottomPanel );
 
@@ -848,6 +852,7 @@ namespace DTXMania
 						this.stBarInformation[ index ].colLetter = song.col文字色;
 						this.tGenerateSongNameBar( index, this.stBarInformation[ index ].strTitleString, this.stBarInformation[ index ].colLetter );
 						this.stBarInformation[index].eBarType = this.eGetSongBarType(song);
+						this.stBarInformation[index].bFavorite = CFavoritesManager.bIsFavorite(song);
 
 						int nNearestIndex = this.n現在のアンカ難易度レベルに最も近い難易度レベルを返す(song);
 						//Update Preview Image Path					
@@ -924,6 +929,7 @@ namespace DTXMania
 						this.stBarInformation[ index ].colLetter = song.col文字色;
 						this.tGenerateSongNameBar( index, this.stBarInformation[ index ].strTitleString, this.stBarInformation[ index ].colLetter );
 						this.stBarInformation[index].eBarType = this.eGetSongBarType(song);
+						this.stBarInformation[index].bFavorite = CFavoritesManager.bIsFavorite(song);
 
 						int nNearestIndex = this.n現在のアンカ難易度レベルに最も近い難易度レベルを返す(song);
 						//Update Preview Image Path						
@@ -1032,7 +1038,7 @@ namespace DTXMania
 							int width = (int) ( 425.0 / Math.Sin( Math.PI * 3 / 5 ) );
 							int x = 665 - ( (int) ( width * db回転率 ) );
 							int y = 269;
-                            this.tDrawBar(i選択曲バーX座標, y - 30, this.stBarInformation[nパネル番号].eBarType, true);
+                            this.tDrawBar(i選択曲バーX座標, y - 30, this.stBarInformation[nパネル番号].eBarType, true, this.stBarInformation[nパネル番号].bFavorite);
 							//-----------------
 							#endregion
 							#region [ タイトル名テクスチャを描画。]
@@ -1067,7 +1073,7 @@ namespace DTXMania
 //							int x = 720 - ( (int) ( width * db回転率 ) );
                             int x = i選曲バーX座標 + 500 - (int)(db割合0to1 * 500);
 							int y = this.ptバーの基本座標[ i ].Y;
-							this.tDrawBar( x, y, this.stBarInformation[ nパネル番号 ].eBarType, false );
+							this.tDrawBar( x, y, this.stBarInformation[ nパネル番号 ].eBarType, false, this.stBarInformation[nパネル番号].bFavorite );
 							//-----------------
 							#endregion
 							#region [ タイトル名テクスチャを描画。]
@@ -1126,7 +1132,7 @@ namespace DTXMania
 
 						#region [ バーテクスチャを描画。]
 						//-----------------
-                        this.tDrawBar(i選択曲バーX座標, y選曲 - 30, this.stBarInformation[nパネル番号].eBarType, true);
+                        this.tDrawBar(i選択曲バーX座標, y選曲 - 30, this.stBarInformation[nパネル番号].eBarType, true, this.stBarInformation[nパネル番号].bFavorite);
 						//-----------------
 						#endregion
 						#region [ Draw Preview Image ]
@@ -1181,7 +1187,7 @@ namespace DTXMania
 
 						#region [ バーテクスチャを描画。]
 						//-----------------
-						this.tDrawBar( x, y, this.stBarInformation[ nパネル番号 ].eBarType, false );
+						this.tDrawBar( x, y, this.stBarInformation[ nパネル番号 ].eBarType, false, this.stBarInformation[nパネル番号].bFavorite );
 						//-----------------
 						#endregion
 						#region [ タイトル名テクスチャを描画。]
@@ -1298,6 +1304,7 @@ namespace DTXMania
 			public CTexture txTitleName;  // タイトル名
 			public STDGBVALUE<int> nSkillValue;  // nスキル値
 			public Color colLetter;  // col文字色
+			public bool bFavorite;
 			//
 			public CTexture txPreviewImage;// txプレビュー画像
 			public CTexture txClearLamp;// txクリアランプ
@@ -1374,6 +1381,7 @@ namespace DTXMania
         private CTexture tx選択中のアーティスト名テクスチャ;
         private CTexture txTopPanel;           // tx上部パネル
 		private CTexture txBottomPanel;        // tx下部パネル
+		private CTexture txFavoriteIcon;
 		private CActSelectStatusPanel actステータスパネル;
         private STBar txSongNameBar;           // tx曲名バー
 		private STSongSelectionBar txSongSelectionBar;  // tx選曲バー
@@ -1530,6 +1538,7 @@ namespace DTXMania
 				this.stBarInformation[ i ].strTitleString = song.strタイトル;
 				this.stBarInformation[ i ].colLetter = song.col文字色;
 				this.stBarInformation[ i ].eBarType = this.eGetSongBarType( song );
+				this.stBarInformation[ i ].bFavorite = CFavoritesManager.bIsFavorite( song );
 				
 				int nNearestScoreIndex = this.n現在のアンカ難易度レベルに最も近い難易度レベルを返す(song);				
 
@@ -1575,7 +1584,7 @@ namespace DTXMania
 			}
 		}
 
-		private void tDrawBar( int x, int y, EBarType type, bool b選択曲)  // tバーの描画
+		private void tDrawBar( int x, int y, EBarType type, bool b選択曲, bool bFavorite )  // tバーの描画
 		{
 			if( x >= SampleFramework.GameWindowSize.Width || y >= SampleFramework.GameWindowSize.Height )
 				return;
@@ -1598,6 +1607,13 @@ namespace DTXMania
                     //-----------------
                     #endregion
                 }
+
+			if( bFavorite && type == EBarType.Score && this.txFavoriteIcon != null )
+			{
+				int iconX = x + ( b選択曲 ? 548 : 534 );
+				int iconY = y + ( b選択曲 ? 34 : 10 );
+				this.txFavoriteIcon.tDraw2D( CDTXMania.app.Device, iconX, iconY );
+			}
         }
         private CTexture tGenerateTextTexture( string str文字)  // t指定された文字テクスチャを生成する
 		{
